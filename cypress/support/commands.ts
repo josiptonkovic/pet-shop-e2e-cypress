@@ -9,6 +9,7 @@ declare global {
             retrieveUsers(): Cypress.Chainable<{ body: { data: any[] } }>
             loginUser(loginCase: 'validUser' | 'invalidEmail' | 'invalidUser' | 'invalidPassword'): Cypress.Chainable<{}>
             sortProducts(sortBy: 'price' | 'brand' | 'category' ): Cypress.Chainable<{}>
+            verifySortedProducts(sortBy: 'price' | 'brand' | 'category' ): Cypress.Chainable<{}>
         }
     }
 };
@@ -110,6 +111,104 @@ Cypress.Commands.add('sortProducts', (sortBy: 'price' | 'brand' | 'category' ) =
         case 'category':
             shopPage.categoryElement.click();
             shopPage.titleElement.should('contain', 'pet oral care');
+        break;
+    };
+});
+
+Cypress.Commands.add('verifySortedProducts', (sortBy: 'price' | 'brand' | 'category' ) => {
+
+    switch (sortBy) {
+
+        case 'price':
+            cy.request({
+                method: 'GET',
+                url: `${Cypress.env('STORE_URL')}api/v1/products?price=500`,
+            }).then((response) => {
+                const retrievedProducts = response.body.data;
+                retrievedProducts.forEach((product) => {
+                    const productName = product.title;
+                    cy.get('.product-card').contains(productName).should('be.visible');
+                });
+            });
+        break;
+        
+        case 'brand':
+            cy.request({
+                method: 'GET',
+                url: `${Cypress.env('STORE_URL')}api/v1/products?brand=8c396991-1e61-3ba6-8ba9-9c17bde33a29`,
+            }).then((response) => {
+                const retrievedProducts = response.body.data;
+                retrievedProducts.forEach((product) => {
+                    const productName = product.title;
+                    cy.get('.product-card').contains(productName).should('be.visible');
+                });
+            });
+        break;
+
+        case 'brand':
+            cy.request({
+                method: 'GET',
+                url: `${Cypress.env('STORE_URL')}api/v1/products?category=34930287-3116-3006-8709-a13c56c76721`,
+            }).then((response) => {
+                const retrievedProducts = response.body.data;
+                retrievedProducts.forEach((product) => {
+                    const productName = product.title;
+                    cy.get('.product-card').contains(productName).should('be.visible');
+                });
+            });
+        break;
+    }
+});
+
+
+
+  Cypress.Commands.add('verifySortedProducts', (sortBy: 'price' | 'brand' | 'category' ) => {
+
+    switch (sortBy) {
+  
+      case 'price':
+        cy.request({
+          method: 'GET',
+          url: `${Cypress.env('STORE_URL')}api/v1/products?price=500`,
+    
+        }).then((response) => {
+          const retrievedProducts = response.body.data;
+          
+          retrievedProducts.forEach((product) => {
+            const productName = product.title;
+            cy.get('.product-card').contains(productName).should('be.visible')
+          })
+        });
+        break;
+  
+      case 'brand':
+        cy.request({
+          method: 'GET',
+          url: `${Cypress.env('STORE_URL')}api/v1/products?brand=8c396991-1e61-3ba6-8ba9-9c17bde33a29`,
+    
+        }).then((response) => {
+          const retrievedProducts = response.body.data;
+          
+          retrievedProducts.forEach((product) => {
+            const productName = product.title;
+            cy.get('.product-card').contains(productName).should('be.visible')
+          })
+        });
+        break;
+  
+      case 'category':
+        cy.request({
+          method: 'GET',
+          url: `${Cypress.env('STORE_URL')}api/v1/products?category=34930287-3116-3006-8709-a13c56c76721`,
+    
+        }).then((response) => {
+          const retrievedProducts = response.body.data;
+          
+          retrievedProducts.forEach((product) => {
+            const productName = product.title;
+            cy.get('.product-card').contains(productName).should('be.visible')
+          })
+        });
         break;
     };
   });
