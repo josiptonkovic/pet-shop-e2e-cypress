@@ -1,5 +1,6 @@
 import cypress = require("cypress");
 import { homePage } from "../pages/Homepge";
+import { shopPage } from "../pages/Shop";
 
 declare global {
     namespace Cypress {
@@ -7,6 +8,7 @@ declare global {
             retrieveToken(): Cypress.Chainable<{ authToken: any; data: any; }>
             retrieveUsers(): Cypress.Chainable<{ body: { data: any[] } }>
             loginUser(loginCase: 'validUser' | 'invalidEmail' | 'invalidUser' | 'invalidPassword'): Cypress.Chainable<{}>
+            sortProducts(sortBy: 'price' | 'brand' | 'category' ): Cypress.Chainable<{}>
         }
     }
 };
@@ -91,3 +93,23 @@ Cypress.Commands.add('loginUser', (loginCase: 'validUser' | 'invalidEmail' | 'in
         }
     });
 });
+
+Cypress.Commands.add('sortProducts', (sortBy: 'price' | 'brand' | 'category' ) => {
+
+    switch (sortBy) {
+  
+        case 'price':
+            shopPage.priceElement.type('500')
+        break;
+  
+        case 'brand':
+            shopPage.brandElement.click();
+            shopPage.titleElement.should('contain', 'kitzy');
+        break;
+  
+        case 'category':
+            shopPage.categoryElement.click();
+            shopPage.titleElement.should('contain', 'pet oral care');
+        break;
+    };
+  });
